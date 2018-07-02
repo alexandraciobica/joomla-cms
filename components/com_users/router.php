@@ -24,6 +24,8 @@ use Joomla\CMS\Menu\AbstractMenu;
  */
 class UsersRouter extends RouterView
 {
+	protected $noIDs = false;
+
 	/**
 	 * Users Component router constructor
 	 *
@@ -34,6 +36,7 @@ class UsersRouter extends RouterView
 	{
 		$this->registerView(new RouterViewConfiguration('login'));
 		$profile = new RouterViewConfiguration('profile');
+		$profile->setKey('id');
 		$profile->addLayout('edit');
 		$this->registerView($profile);
 		$this->registerView(new RouterViewConfiguration('registration'));
@@ -45,5 +48,18 @@ class UsersRouter extends RouterView
 		$this->attachRule(new MenuRules($this));
 		$this->attachRule(new StandardRules($this));
 		$this->attachRule(new NomenuRules($this));
+	}
+
+	/**
+	 * Method to get the segment(s) for the logged in user profile
+	 *
+	 * @param   string  $id     ID of the user profile to retrieve the segments for
+	 * @param   array   $query  The request that is built right now
+	 *
+	 * @return  array|string  The segments of this item
+	 */
+	public function getProfileSegment($id, $query)
+	{
+//		return array((int) $id => $id);
 	}
 }

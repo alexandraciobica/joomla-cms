@@ -42,103 +42,74 @@ class DisplayController extends BaseController
 		// Set the default view name and format from the Request.
 		$vName   = $this->input->getCmd('view', 'login');
 		$vFormat = $document->getType();
-		$lName   = $this->input->getCmd('layout', 'default');
 
-		if ($view = $this->getView($vName, $vFormat))
+		$user = Factory::getUser();
+
+		if ($vName == 'remind' || $vName == 'reset')
 		{
-			// Do any specific processing by view.
-			switch ($vName)
+			if ($user->get('guest') != 1)
 			{
-				case 'registration':
-					// If the user is already logged in, redirect to the profile page.
-					$user = Factory::getUser();
+				// Redirect to profile page.
+				$this->setRedirect(Route::_('index.php?option=com_users&view=profile', false));
 
-					if ($user->get('guest') != 1)
-					{
-						// Redirect to profile page.
-						$this->setRedirect(Route::_('index.php?option=com_users&view=profile', false));
+				return;
+			}
+		}
 
-						return;
-					}
+		if ($vName == 'profile')
+		{
+			if ($user->get('guest') == 1)
+			{
+				// Redirect to login page.
+				$this->setRedirect(Route::_('index.php?option=com_users&view=login', false));
 
-					// Check if user registration is enabled
-					if (ComponentHelper::getParams('com_users')->get('allowUserRegistration') == 0)
-					{
-						// Registration is disabled - Redirect to login page.
-						$this->setRedirect(Route::_('index.php?option=com_users&view=login', false));
+				return;
+			}
+		}
 
-						return;
-					}
+		if ($vName =='registration')
+		{
+			// If the user is already logged in, redirect to the profile page.
+			if ($user->get('guest') != 1)
+			{
+				// Redirect to profile page.
+				$this->setRedirect(Route::_('index.php?option=com_users&view=profile&layout=edit', false));
 
-					// The user is a guest, load the registration model and show the registration page.
-					$model = $this->getModel('Registration');
-					break;
-
-				// Handle view specific models.
-				case 'profile':
-
-					// If the user is a guest, redirect to the login page.
-					$user = Factory::getUser();
-
-					if ($user->get('guest') == 1)
-					{
-						// Redirect to login page.
-						$this->setRedirect(Route::_('index.php?option=com_users&view=login', false));
-
-						return;
-					}
-
-					$model = $this->getModel($vName);
-					break;
-
-				// Handle the default views.
-				case 'login':
-					$model = $this->getModel($vName);
-					break;
-
-				case 'reset':
-					// If the user is already logged in, redirect to the profile page.
-					$user = Factory::getUser();
-
-					if ($user->get('guest') != 1)
-					{
-						// Redirect to profile page.
-						$this->setRedirect(Route::_('index.php?option=com_users&view=profile', false));
-
-						return;
-					}
-
-					$model = $this->getModel($vName);
-					break;
-
-				case 'remind':
-					// If the user is already logged in, redirect to the profile page.
-					$user = Factory::getUser();
-
-					if ($user->get('guest') != 1)
-					{
-						// Redirect to profile page.
-						$this->setRedirect(Route::_('index.php?option=com_users&view=profile', false));
-
-						return;
-					}
-
-					$model = $this->getModel($vName);
-					break;
-
-				default:
-					$model = $this->getModel('Login');
-					break;
+				return;
 			}
 
-			// Push the model into the view (as default).
-			$view->setModel($model, true);
-			$view->setLayout($lName);
+			// Check if user registration is enabled
+			if (ComponentHelper::getParams('com_users')->get('allowUserRegistration') == 0)
+			{
+				// Registration is disabled - Redirect to login page.
+				$this->setRedirect(Route::_('index.php?option=com_users&view=login', false));
 
-			// Push document object into the view.
-			$view->document = $document;
-
-			$view->display();
+				return;
+			}
 		}
+
+		$this->input->set('view', $vName);
+
+		$safeurlparams = array(
+			'catid' => 'INT',
+			'id' => 'INT',
+			'cid' => 'ARRAY',
+			'year' => 'INT',
+			'month' => 'INT',
+			'limit' => 'UINT',
+			'limitstart' => 'UINT',
+			'showall' => 'INT',
+			'return' => 'BASE64',
+			'filter' => 'STRING',
+			'filter_order' => 'CMD',
+			'filter_order_Dir' => 'CMD',
+			'filter-search' => 'STRING',
+			'print' => 'BOOLEAN',
+			'lang' => 'CMD',
+			'Itemid' => 'INT');
+
+		parent::display($cachable, $safeurlparams);
+
+		return $this;
 	}
 }
