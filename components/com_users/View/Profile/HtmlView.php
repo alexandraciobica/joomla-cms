@@ -20,6 +20,7 @@ use Joomla\Database\DatabaseDriver;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Component\ComponentHelper;
 
 /**
  * Profile view class for Users.
@@ -160,6 +161,17 @@ class HtmlView extends BaseHtmlView
 		if (isset($active->query['layout']))
 		{
 			$this->setLayout($active->query['layout']);
+		}
+
+		// Prepare view
+		if (ComponentHelper::getParams('com_users')->get('frontend_userparams'))
+		{
+			$this->data->showFrontendUserparams = true;
+
+			if (Factory::getUser()->authorise('core.login.admin'))
+			{
+				$this->data->showFrontendAdminParams = true;
+			}
 		}
 
 		// Escape strings for HTML output

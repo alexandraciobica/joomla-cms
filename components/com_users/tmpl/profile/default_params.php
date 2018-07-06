@@ -16,32 +16,39 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 
 $user = $this->data;
 ?>
-
-<span>Timezone: </span> <?php echo $user->params['timezone']; ?>
-
-<?php $fields = $this->form->getFieldset('params'); ?>
-<?php if (count($fields)) : ?>
+<?php if ($this->data->showFrontendUserparams) : ?>
 	<fieldset id="users-profile-custom" class="com-users-profile__params">
 		<legend><?php echo Text::_('COM_USERS_SETTINGS_FIELDSET_LABEL'); ?></legend>
-		<dl class="dl-horizontal">
-			<?php foreach ($fields as $field) : ?>
-				<?php if (!$field->hidden) : ?>
-					<dt>
-						<?php echo $field->title; ?>
-					</dt>
-					<dd>
-						<?php if (HTMLHelper::isRegistered('users.' . $field->id)) : ?>
-							<?php echo HTMLHelper::_('users.' . $field->id, $field->value); ?>
-						<?php elseif (HTMLHelper::isRegistered('users.' . $field->fieldname)) : ?>
-							<?php echo HTMLHelper::_('users.' . $field->fieldname, $field->value); ?>
-						<?php elseif (HTMLHelper::isRegistered('users.' . $field->type)) : ?>
-							<?php echo HTMLHelper::_('users.' . $field->type, $field->value); ?>
-						<?php else : ?>
-							<?php echo HTMLHelper::_('users.value', $field->value); ?>
-						<?php endif; ?>
-					</dd>
-				<?php endif; ?>
-			<?php endforeach; ?>
-		</dl>
+		<div>
+			<span><?php echo Text::_('COM_USERS_PROFILE_EDITOR_LABEL'); ?></span>
+			<?php echo $user->params['editor'] ?: Text::_('COM_USERS_PROFILE_VALUE_NOT_FOUND'); ?>
+		</div>
+
+		<div>
+			<span><?php echo Text::_('COM_USERS_PROFILE_TIMEZONE_LABEL'); ?></span>
+			<?php  echo $user->params['timezone'] ?: Text::_('COM_USERS_PROFILE_VALUE_NOT_FOUND'); ?>
+		</div>
+
+		<div>
+			<span><?php echo Text::_('COM_USERS_PROFILE_FRONTEND_LANGUAGE_LABEL'); ?></span>
+			<?php  echo $user->params['language'] ?: Text::_('COM_USERS_PROFILE_VALUE_NOT_FOUND'); ?>
+		</div>
+
+		<?php if ($this->data->showFrontendAdminParams) : ?>
+			<div>
+				<span><?php echo Text::_('COM_USERS_USER_FIELD_BACKEND_TEMPLATE_LABEL'); ?></span>
+				<?php  echo $user->params['admin_style'] ?: Text::_('COM_USERS_PROFILE_VALUE_NOT_FOUND'); ?>
+			</div>
+
+			<div>
+				<span><?php echo Text::_('COM_USERS_USER_FIELD_BACKEND_LANGUAGE_LABEL'); ?></span>
+				<?php  echo $user->params['admin_language'] ?: Text::_('COM_USERS_PROFILE_VALUE_NOT_FOUND'); ?>
+			</div>
+
+			<div>
+				<span><?php echo Text::_('COM_USERS_USER_FIELD_HELPSITE_LABEL'); ?></span>
+				<?php  echo $user->params['helpsite'] ?: Text::_('COM_USERS_PROFILE_VALUE_NOT_FOUND'); ?>
+			</div>
+		<?php endif; ?>
 	</fieldset>
 <?php endif; ?>
